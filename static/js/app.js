@@ -106,7 +106,7 @@ var set_player_data = function(data){
     setTimeout(() => {
         addRowHandlers()
         sortHeaders()
-    }, 2000) 
+    }, 1000) 
 }
 
 function showHistogram(data){
