@@ -77,3 +77,6 @@ html {
     font-weight: bold;
     color: #009879;
 }
+#dataTable tr {
+    cursor: pointer;
+}
