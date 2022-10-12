@@ -79,30 +79,8 @@ var get_player_data = function(){
 
 // sets histogram and players data in the table
 var set_player_data = function(data){
- 
-    const DUMMY_DATA =data;
     
-    const xScale = d3
-        .scaleBand()
-        .domain(DUMMY_DATA.map((dataPoint) => dataPoint.Name))
-        .rangeRound([0, 1000])
-        .padding(0.1);
-    const yScale = d3.scaleLinear().domain([0, 100]).range([600, 0]);
-    
-    const container = d3.select('svg').classed('container', true);
-    
-    const bars = container
-        .selectAll('.bar')
-        .data(DUMMY_DATA)
-        .enter()
-        .append('rect')
-        .classed('bar', true)
-        .attr('width', xScale.bandwidth())
-        .attr('height', (data) => 600 - yScale(data.Rating))
-        .attr('x', data => xScale(data.Name))
-        .attr('y', data => yScale(data.Rating));
-    
-    
+    showHistogram(data)
     
     let return_data = ""
     let column_names = ""
@@ -117,12 +95,67 @@ var set_player_data = function(data){
    
     console.log(column_names)
     document.getElementById('root').innerHTML
-        +=`<table class="styled-table">
+        +=`<table id="dataTable" class="styled-table">
         <thead>
             <tr>${column_names}</tr>
         </thead><tbody>
         ${return_data}
         </tbody></table>`;
+
+        addRowHandlers()
+}
+
+function showHistogram(data){
+
+    const DUMMY_DATA =data;
+    console.log(DUMMY_DATA)
+
+    const MARGINS = {top: 20, bottom: 10}
+    const CHART_WIDTH = 1200;
+    const CHART_HEIGHT = 1200 - MARGINS.top - MARGINS.bottom
+
+    const x = d3.scaleBand()
+        .rangeRound([0, CHART_WIDTH])
+        .padding(0.1)
+
+    const y = d3.scaleLinear()
+        .range([CHART_HEIGHT, 0])
+
+    x.domain(DUMMY_DATA.map( (d) => d.Nationality))
+    y.domain([0, d3.max(DUMMY_DATA, d => d.Rating) + 3])
+
+
+    const chartContainer = d3.select('svg')
+        .attr('width', CHART_WIDTH)
+        .attr('height', CHART_HEIGHT + MARGINS.top + MARGINS.bottom)
+    
+    const chart = chartContainer.append('g')
+
+    chart.append('g')
+        .call(d3.axisBottom(x).tickSizeOuter(0))
+        .attr('transform', `translate(0, ${CHART_HEIGHT -5 })`)
+        .attr('color','#4f009e');
+
+    chart.selectAll('.bar')
+        .data(DUMMY_DATA)    
+        .enter()
+        .append('rect')
+        .classed('bar',true)
+        .attr('width', x.bandwidth())
+        .attr('height', data => CHART_HEIGHT - y(data.Rating))
+        .attr('x', data => x(data.Nationality))
+        .attr('y', data => y(data.Rating))
+
+    chart.selectAll('.label')
+        .data(DUMMY_DATA)
+        .enter()
+        .append('text')
+        .text((data) => data.Rating )
+        .attr('x', data => x(data.Nationality) + x.bandwidth() / 2)
+        .attr('y', data => y(data.Rating) - 20)
+        .attr('text-anchor', 'middle')
+        .classed('label', true)
+
 }
 
 // return rows for table
@@ -153,7 +186,37 @@ function removeColumn(control){
     remove_dropdown()
 }
 
+// row handler
+function addRowHandlers() {
+    var table = document.getElementById("dataTable");
+    console.log(table)
+    var rows = table.getElementsByTagName("tr");
+    for (i = 0; i < rows.length; i++) {
+        var currentRow = table.rows[i];
+        var createClickHandler = 
+            function(row) 
+            {
+                return function() { 
+                    var cell = row.getElementsByTagName("td")[0];
+                    let name = cell.innerHTML
+                        document.getElementById("playerName").innerHTML = `<p>Player Name : ${name}</p>`
+                        console.log(cell)
+                        window.scrollTo(0, document.body.scrollHeight - 1500);
+
+                    };
+            };
+
+        currentRow.onclick = createClickHandler(currentRow);
+    }
+}
+
+
 // starting calls
-add_dropdown();
-get_player_data();
-remove_dropdown();
+document.addEventListener('DOMContentLoaded', fn, false);
+
+function fn() {
+    add_dropdown()
+    get_player_data()
+    remove_dropdown()   
+}
+ 

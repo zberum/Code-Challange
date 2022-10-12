@@ -1,3 +1,50 @@
+html {
+    font-family: sans-serif;
+}
+
+#app {
+    display: flex;
+    margin: 2rem 1rem;
+}
+
+#chart {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+    padding: 1rem;
+}
+
+#chart,
+#data {
+    margin: 0 2rem;
+}
+
+#data ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#data li {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+    width: 10rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.bar {
+    fill: #4f009e;
+}
+
+.label {
+    fill: #4f009e;
+}
+#playerName{
+    text-align: center;
+    color: #4f009e;
+}
 .styled-table {
     border-collapse: collapse;
     margin: 25px 0;
@@ -29,15 +76,4 @@
 .styled-table tbody tr.active-row {
     font-weight: bold;
     color: #009879;
-}
-.container {
-    margin-left: 200px;
-    margin-right: 200px;
-    width: 1000px;
-    height: 600px;
-    border: 1px solid #720570;
-}
-
-.bar {
-    fill: #720570;
 }
