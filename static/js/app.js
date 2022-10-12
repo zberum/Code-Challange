@@ -102,7 +102,11 @@ var set_player_data = function(data){
         ${return_data}
         </tbody></table>`;
 
+    
+    setTimeout(() => {
         addRowHandlers()
+        sortHeaders()
+    }, 2000) 
 }
 
 function showHistogram(data){
@@ -188,9 +192,11 @@ function removeColumn(control){
 
 // row handler
 function addRowHandlers() {
+   
     var table = document.getElementById("dataTable");
     console.log(table)
-    var rows = table.getElementsByTagName("tr");
+    var tableBody = table.querySelector("tbody")
+    var rows = tableBody.querySelectorAll('tr');
     for (i = 0; i < rows.length; i++) {
         var currentRow = table.rows[i];
         var createClickHandler = 
@@ -198,6 +204,7 @@ function addRowHandlers() {
             {
                 return function() { 
                     var cell = row.getElementsByTagName("td")[0];
+                    console.log(cell)
                     let name = cell.innerHTML
                         document.getElementById("playerName").innerHTML = `<p>Player Name : ${name}</p>`
                         console.log(cell)
@@ -209,6 +216,58 @@ function addRowHandlers() {
         currentRow.onclick = createClickHandler(currentRow);
     }
 }
+
+// sorting handler
+function sortHeaders(){
+    const table = document.getElementById('dataTable');
+
+    // Query the headers
+    const headers = table.querySelectorAll('th');
+
+    // Loop over the headers
+    [].forEach.call(headers, function (header, index) {
+        header.addEventListener('click', function () {
+            // This function will sort the column
+            console.log(header);
+            sortColumn(index);
+        });
+    });
+
+}
+
+
+const sortColumn = function (index) {
+    const tableBody = document.getElementById('dataTable').querySelector('tbody');
+    const rows = tableBody.querySelectorAll('tr');
+    // Clone the rows
+    const newRows = Array.from(rows);
+
+    // Sort rows by the content of cells
+    newRows.sort(function (rowA, rowB) {
+        // Get the content of cells
+        const cellA = rowA.querySelectorAll('td')[index].innerHTML;
+        const cellB = rowB.querySelectorAll('td')[index].innerHTML;
+
+        switch (true) {
+            case cellA > cellB:
+                return 1;
+            case cellA < cellB:
+                return -1;
+            case cellA === cellB:
+                return 0;
+        }
+    });
+
+    // Remove old rows
+    [].forEach.call(rows, function (row) {
+        tableBody.removeChild(row);
+    });
+
+    // Append new row
+    newRows.forEach(function (newRow) {
+        tableBody.appendChild(newRow);
+    });
+};
 
 
 // starting calls
